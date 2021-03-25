@@ -1,0 +1,1 @@
+web: ./build/install/crossingschedule-be/bin/crossingschedule-be
