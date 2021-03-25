@@ -1,0 +1,6 @@
+{
+  "name": "Crossing Schedule BE",
+  "description": "Animal crossing island management app",
+  "image": "heroku/java",
+  "addons": [ "heroku-postgresql" ]
+}
