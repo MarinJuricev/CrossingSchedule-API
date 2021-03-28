@@ -4,7 +4,7 @@ import com.example.core.model.Either
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.feature.auth.domain.model.AuthFailure
-import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccount
+import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccountFailure
 
 interface UserIdToEitherFailureOrUnitMapper {
     suspend fun map(
@@ -23,6 +23,6 @@ class UserIdToEitherFailureOrUnitMapperImpl : UserIdToEitherFailureOrUnitMapper 
         if (providedUserId == returnedUserId) {
             returnedUserId.buildRight()
         } else {
-            ErrorWhileCreatingUserAccount().buildLeft()
+            ErrorWhileCreatingUserAccountFailure().buildLeft()
         }
 }

@@ -17,13 +17,13 @@ import com.example.feature.auth.domain.usecase.GetUserFromToken
 import com.example.feature.auth.infrastructure.AuthService
 import com.example.feature.auth.infrastructure.AuthServiceImpl
 import com.example.feature.auth.infrastructure.ResponseUser
-import com.example.feature.auth.infrastructure.mapper.CreateUserServiceMapper
+import com.example.feature.auth.infrastructure.mapper.EitherUserToEitherResponseUserMapper
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 private val userToEitherFailureOrUserMapperName = UserToEitherFailureOrUserMapper::class.java.name
-private val createUserServiceMapperName = CreateUserServiceMapper::class.java.name
+private val createUserServiceMapperName = EitherUserToEitherResponseUserMapper::class.java.name
 
 val authModule = module {
     single<AuthDao> { Users }
@@ -37,7 +37,7 @@ val authModule = module {
     factory<Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>>>(
         named(createUserServiceMapperName)
     ) {
-        CreateUserServiceMapper()
+        EitherUserToEitherResponseUserMapper()
     }
 
     factory<UserIdToEitherFailureOrUnitMapper> { UserIdToEitherFailureOrUnitMapperImpl() }

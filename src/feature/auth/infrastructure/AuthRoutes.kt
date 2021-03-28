@@ -2,7 +2,7 @@ package com.example.feature.auth.infrastructure
 
 import com.example.core.model.CrossingResponse
 import com.example.core.model.CrossingStatus
-import com.example.feature.auth.domain.model.AuthResponse
+import com.example.core.model.Either
 import com.example.feature.auth.domain.model.User
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -25,13 +25,28 @@ fun Route.authRoute() {
         get("/login") {
             val userFromToken = call.principal<User>()
 
-            call.respond(
-                HttpStatusCode.OK,
-                CrossingResponse(
-                    status = CrossingStatus.Success, //TODO Please don't use strings... use a enum or something
-                    data = AuthResponse("Successfully created user with username: ${call.principal<User>()?.username}")
-                )
-            )
+            when (val result = authService.loginUser(userFromToken?.id)) {
+                is Either.Right -> {
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = CrossingResponse(
+                            status = CrossingStatus.Success,
+                            data = result.value
+                        )
+                    )
+                }
+                is Either.Left -> {
+                    call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = CrossingResponse(
+                            status = CrossingStatus.Fail,
+                            message = result.error.errorMessage
+                        )
+                    )
+                }
+            }
         }
     }
 }
+
+

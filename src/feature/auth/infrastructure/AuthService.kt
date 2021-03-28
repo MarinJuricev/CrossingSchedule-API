@@ -4,7 +4,8 @@ import com.example.core.model.Either
 import com.example.core.model.Mapper
 import com.example.core.model.buildLeft
 import com.example.feature.auth.domain.model.AuthFailure
-import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccount
+import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccountFailure
+import com.example.feature.auth.domain.model.AuthFailure.InvalidLoginFailure
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.domain.usecase.CreateUser
 import com.example.feature.auth.domain.usecase.GetUserById
@@ -13,13 +14,14 @@ import com.example.feature.auth.domain.usecase.GetUserFromToken
 interface AuthService {
     suspend fun getUserFromAuthUid(uid: String): User?
     suspend fun createUser(id: String, username: String): Either<AuthFailure, ResponseUser>
+    suspend fun loginUser(id: String?): Either<AuthFailure, ResponseUser>
 }
 
 class AuthServiceImpl(
     private val getUserFromToken: GetUserFromToken,
     private val getUserById: GetUserById,
     private val createUserUseCase: CreateUser,
-    private val createUserServiceMapper: Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>>
+    private val eitherUserToEitherResponseUserMapper: Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>>
 ) : AuthService {
     override suspend fun getUserFromAuthUid(
         uid: String,
@@ -34,9 +36,22 @@ class AuthServiceImpl(
     ): Either<AuthFailure, ResponseUser> {
         return when (getUserById(id)) {
             // We got a user back, not desired behavior return a failure
-            is Either.Right -> ErrorWhileCreatingUserAccount().buildLeft()
+            is Either.Right -> ErrorWhileCreatingUserAccountFailure().buildLeft()
             // No user found for that ID we create one
-            is Either.Left -> createUserServiceMapper.map(createUserUseCase(id, username))
+            is Either.Left -> eitherUserToEitherResponseUserMapper.map(createUserUseCase(id, username))
+        }
+    }
+
+    override suspend fun loginUser(
+        id: String?
+    ): Either<AuthFailure, ResponseUser> {
+        if (id == null) {
+            return InvalidLoginFailure().buildLeft()
+        }
+
+        return when (val result = getUserById(id)) {
+            is Either.Right -> eitherUserToEitherResponseUserMapper.map(result)
+            is Either.Left -> InvalidLoginFailure().buildLeft()
         }
     }
 }

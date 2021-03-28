@@ -7,7 +7,7 @@ import com.example.feature.auth.domain.model.AuthFailure
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.infrastructure.ResponseUser
 
-class CreateUserServiceMapper : Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>> {
+class EitherUserToEitherResponseUserMapper : Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>> {
 
     override suspend fun map(origin: Either<AuthFailure, User>): Either<AuthFailure, ResponseUser> =
         when (origin) {
