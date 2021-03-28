@@ -7,8 +7,7 @@ import com.example.core.model.buildRight
 import com.example.fakeResponseUser
 import com.example.fakeUser
 import com.example.feature.auth.domain.model.AuthFailure
-import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccountFailure
-import com.example.feature.auth.domain.model.AuthFailure.InvalidLoginFailure
+import com.example.feature.auth.domain.model.AuthFailure.*
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.domain.usecase.CreateUser
 import com.example.feature.auth.domain.usecase.GetUserById
@@ -100,10 +99,27 @@ internal class AuthServiceImplTest {
         }
 
     @Test
+    fun `createUser should return NoUserPresentForTokenFailure when provided is id null`() = runBlockingTest {
+        val actualResult = sut.createUser(null, USERNAME)
+        val expectedResult = NoUserPresentForTokenFailure().buildLeft()
+
+        assertThat(actualResult).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `createUser should return MissingRequiredArgument when provided username is null`() = runBlockingTest {
+        val actualResult = sut.createUser(ID, null)
+        val expectedResult = MissingRequiredArgument("Username is required got: null").buildLeft()
+
+        assertThat(actualResult).isEqualTo(expectedResult)
+    }
+
+    @Test
     fun `loginUser should return InvalidLoginFailure when provided id is null`() = runBlockingTest {
         val actualResult = sut.loginUser(null)
+        val expectedResult = InvalidLoginFailure().buildLeft()
 
-        assertThat(actualResult).isEqualTo(InvalidLoginFailure().buildLeft())
+        assertThat(actualResult).isEqualTo(expectedResult)
     }
 
     @Test
