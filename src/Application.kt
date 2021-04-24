@@ -5,6 +5,8 @@ import com.example.core.di.coreModule
 import com.example.core.ext.installCommonFeatures
 import com.example.feature.auth.di.authModule
 import com.example.feature.auth.infrastructure.registerAuthRoutes
+import com.example.feature.islands.di.islandModule
+import com.example.feature.islands.infrastructure.registerIslandRoutes
 import com.example.feature.schedule.infrastructure.registerScheduleRoutes
 import io.ktor.application.*
 import io.ktor.http.*
@@ -21,7 +23,8 @@ fun Application.module(testing: Boolean = false) {
     install(Koin) {
         modules(
             coreModule,
-            authModule
+            authModule,
+            islandModule
         )
     }
 
@@ -32,6 +35,7 @@ fun Application.module(testing: Boolean = false) {
     routing {
         registerScheduleRoutes()
         registerAuthRoutes()
+        registerIslandRoutes()
 
         //TODO Render an actual landing page
         get("/") {
