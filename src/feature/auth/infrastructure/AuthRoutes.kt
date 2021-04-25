@@ -12,14 +12,16 @@ import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
 fun Application.registerAuthRoutes() {
+
+    val authService by inject<AuthService>()
+
     routing {
-        authRoute()
+        loginRoute(authService)
+        signUpRoute(authService)
     }
 }
 
-fun Route.authRoute() {
-
-    val authService by inject<AuthService>()
+fun Route.loginRoute(authService: AuthService) {
 
     authenticate {
         get("/login") {
@@ -31,6 +33,9 @@ fun Route.authRoute() {
             }
         }
     }
+}
+
+fun Route.signUpRoute(authService: AuthService) {
 
     authenticate {
         post("/signup") {
