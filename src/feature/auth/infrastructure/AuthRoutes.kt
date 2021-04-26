@@ -2,7 +2,7 @@ package com.example.feature.auth.infrastructure
 
 import com.example.core.ext.buildCrossingFailResponse
 import com.example.core.ext.buildCrossingSuccessResponse
-import com.example.core.model.Either
+import com.example.core.model.Either.*
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.infrastructure.model.SignUpRequest
 import io.ktor.application.*
@@ -28,8 +28,8 @@ fun Route.loginRoute(authService: AuthService) {
             val userFromToken = call.principal<User>()
 
             when (val result = authService.loginUser(userFromToken?.id)) {
-                is Either.Right -> call.buildCrossingSuccessResponse(result.value)
-                is Either.Left -> call.buildCrossingFailResponse(result.error.errorMessage)
+                is Right -> call.buildCrossingSuccessResponse(result.value)
+                is Left -> call.buildCrossingFailResponse(result.error.errorMessage)
             }
         }
     }
@@ -46,8 +46,8 @@ fun Route.signUpRoute(authService: AuthService) {
                 userFromToken?.id,
                 signUpRequestBody?.username
             )) {
-                is Either.Right -> call.buildCrossingSuccessResponse(result.value)
-                is Either.Left -> call.buildCrossingFailResponse(result.error.errorMessage)
+                is Right -> call.buildCrossingSuccessResponse(result.value)
+                is Left -> call.buildCrossingFailResponse(result.error.errorMessage)
             }
         }
     }

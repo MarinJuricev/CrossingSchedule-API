@@ -1,10 +1,7 @@
 package com.example.feature.auth.data.dao
 
 import com.example.feature.auth.domain.model.User
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 interface AuthDao {
@@ -13,9 +10,12 @@ interface AuthDao {
 }
 
 object Users : Table(), AuthDao {
-    val id = varchar("id", length = 255)
-    val username = varchar("username", length = 255)
-    private val creationTime = long("creationTime")
+    val id: Column<String> = varchar("id", length = 255)
+    val username: Column<String> = varchar("username", length = 255)
+    private val creationTime: Column<Long> = long("creationTime")
+
+    override val primaryKey = PrimaryKey(id)
+
 
     override suspend fun getUserById(userId: String): User? = newSuspendedTransaction {
         select {

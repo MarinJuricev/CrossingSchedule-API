@@ -1,6 +1,7 @@
 package com.example.feature.auth.infrastructure
 
 import com.example.core.model.Either
+import com.example.core.model.Either.*
 import com.example.core.model.Mapper
 import com.example.core.model.buildLeft
 import com.example.feature.auth.domain.model.AuthFailure
@@ -25,8 +26,8 @@ class AuthServiceImpl(
     override suspend fun getUserFromAuthUid(
         uid: String,
     ): User? = when (val result = getUserFromToken(uid)) {
-        is Either.Right -> result.value
-        is Either.Left -> null
+        is Right -> result.value
+        is Left -> null
     }
 
     override suspend fun createUser(
@@ -38,9 +39,9 @@ class AuthServiceImpl(
             username == null -> MissingRequiredArgument("Username is required got: $username").buildLeft()
             else -> when (getUserById(id)) {
                 // We got a user back, not desired behavior return a failure
-                is Either.Right -> ErrorWhileCreatingUserAccountFailure().buildLeft()
+                is Right -> ErrorWhileCreatingUserAccountFailure().buildLeft()
                 // No user found for that ID we create one
-                is Either.Left -> eitherUserToEitherResponseUserMapper.map(createUserUseCase(id, username))
+                is Left -> eitherUserToEitherResponseUserMapper.map(createUserUseCase(id, username))
             }
         }
     }
@@ -53,8 +54,8 @@ class AuthServiceImpl(
         }
 
         return when (val result = getUserById(id)) {
-            is Either.Right -> eitherUserToEitherResponseUserMapper.map(result)
-            is Either.Left -> InvalidLoginFailure().buildLeft()
+            is Right -> eitherUserToEitherResponseUserMapper.map(result)
+            is Left -> InvalidLoginFailure().buildLeft()
         }
     }
 }
