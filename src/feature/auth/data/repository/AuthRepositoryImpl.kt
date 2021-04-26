@@ -15,7 +15,9 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
     override suspend fun getUserById(
         userId: String
-    ): Either<AuthFailure, User> = userToEitherFailureOrUserMapper.map(authDao.getUserById(userId))
+    ): Either<AuthFailure, User> = userToEitherFailureOrUserMapper.map(
+        authDao.getUserById(userId)
+    )
 
     override suspend fun createUser(
         userId: String,

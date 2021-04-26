@@ -10,11 +10,13 @@ val junit5_version: String by project
 val mockk_version: String by project
 val truth_version: String by project
 val coroutines_test_version: String by project
+val firebase_admin_version: String by project
 
 plugins {
     application
-    kotlin("jvm") version "1.4.21"
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("jvm") version "1.4.30"
+    kotlin("plugin.serialization") version "1.4.30"
+    id("name.remal.check-dependency-updates") version "1.3.1"
 }
 
 group = "com.example"
@@ -58,7 +60,7 @@ dependencies {
     implementation("org.koin:koin-ktor:$koin_version")
 
     // Firebase
-    implementation("com.google.firebase:firebase-admin:7.1.0")
+    implementation("com.google.firebase:firebase-admin:$firebase_admin_version")
 
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("com.google.truth:truth:$truth_version")
