@@ -5,11 +5,13 @@ import com.example.feature.auth.AuthConfig.configure
 import com.example.feature.auth.domain.model.AuthResponse
 import com.example.feature.auth.domain.model.authStatusPages
 import com.example.feature.auth.ext.firebase
+import com.example.feature.auth.infrastructure.ResponseUser
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.locations.*
 import io.ktor.serialization.*
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -34,11 +36,14 @@ fun Application.installCommonFeatures() {
 
                 serializersModule = SerializersModule {
                     contextual(AuthResponse.serializer())
+                    contextual(ResponseUser.serializer())
                 }
             }
         )
     }
     install(StatusPages) {
+        //TODO Remove this logic, this is only needed if something that I don't have control throws a exception,
+        //TODO we'd like to wrap it into our either and [CrossingResponse]
         authStatusPages()
         unexpectedStatusPages()
     }
