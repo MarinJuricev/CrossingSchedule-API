@@ -5,6 +5,6 @@ import com.example.feature.islands.domain.model.IslandFailure
 import com.example.feature.islands.domain.model.IslandInfo
 
 interface IslandRepository {
-
     suspend fun createIsland(userId: String, islandInfo: IslandInfo): Either<IslandFailure, IslandInfo>
+    suspend fun getIslandsForGivenUser(userId: String): Either<IslandFailure, List<IslandInfo>>
 }

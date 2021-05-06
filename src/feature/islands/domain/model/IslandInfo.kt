@@ -4,4 +4,5 @@ data class IslandInfo(
     val islandName: String,
     val hemisphere: Hemisphere,
     val numberOfVillagers: Int,
+    val lastVisited: Long,
 )

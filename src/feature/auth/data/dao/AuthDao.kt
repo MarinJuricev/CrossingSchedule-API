@@ -10,7 +10,7 @@ interface AuthDao {
 }
 
 object Users : Table(), AuthDao {
-    val id: Column<String> = varchar("id", length = 255)
+    val id: Column<String> = varchar("id", length = 255).uniqueIndex()
     val username: Column<String> = varchar("username", length = 255)
     private val creationTime: Column<Long> = long("creationTime")
 
@@ -33,10 +33,10 @@ object Users : Table(), AuthDao {
                 it[creationTime] = System.currentTimeMillis()
             } get Users.id
         }
-}
 
-private fun ResultRow.mapRowToUser() =
-    User(
-        id = this[Users.id],
-        username = this[Users.username],
-    )
+    private fun ResultRow.mapRowToUser() =
+        User(
+            id = this[id],
+            username = this[username],
+        )
+}

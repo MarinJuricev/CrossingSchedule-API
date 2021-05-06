@@ -8,7 +8,6 @@ import com.example.feature.islands.domain.repository.IslandRepository
 class CreateIsland(
     private val islandRepository: IslandRepository,
 ) {
-
     suspend operator fun invoke(
         userId: String,
         islandInfo: IslandInfo,
