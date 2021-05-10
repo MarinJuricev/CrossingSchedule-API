@@ -1,6 +1,7 @@
 package com.example.core.database
 
 import com.example.feature.auth.data.dao.Users
+import com.example.feature.islands.data.dao.Islands
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -15,6 +16,7 @@ class DatabaseProviderImpl(
         Database.connect(hikari(config))
         transaction {
             create(Users)
+            create(Islands)
         }
     }
 
