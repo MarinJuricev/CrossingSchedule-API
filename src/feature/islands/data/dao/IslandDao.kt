@@ -3,11 +3,12 @@ package com.example.feature.islands.data.dao
 import com.example.feature.auth.data.dao.Users
 import com.example.feature.islands.domain.model.Hemisphere
 import com.example.feature.islands.domain.model.IslandInfo
+import com.example.feature.islands.domain.model.IslandRequestInfo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 interface IslandDao {
-    suspend fun createIsland(userId: String, islandInfo: IslandInfo): Int
+    suspend fun createIsland(userId: String, islandRequestInfo: IslandRequestInfo): Int
     suspend fun getIslandsFromUserId(userId: String): List<IslandInfo>
     suspend fun getIslandById(islandId: Int): IslandInfo?
 }
@@ -22,12 +23,12 @@ object Islands : Table(), IslandDao {
 
     override suspend fun createIsland(
         userId: String,
-        islandInfo: IslandInfo,
+        islandRequestInfo: IslandRequestInfo,
     ): Int = newSuspendedTransaction {
         insert {
-            it[name] = islandInfo.islandName
-            it[hemisphere] = islandInfo.hemisphere
-            it[numberOfVillagers] = islandInfo.numberOfVillagers
+            it[name] = islandRequestInfo.islandName
+            it[hemisphere] = islandRequestInfo.hemisphere
+            it[numberOfVillagers] = islandRequestInfo.numberOfVillagers
             it[Islands.userId] = userId
             it[lastVisited] = System.currentTimeMillis()
         } get Islands.id
@@ -54,6 +55,7 @@ object Islands : Table(), IslandDao {
 
     private fun ResultRow.mapRowToIsland() =
         IslandInfo(
+            islandId = this[id],
             islandName = this[name],
             hemisphere = this[hemisphere],
             numberOfVillagers = this[numberOfVillagers],

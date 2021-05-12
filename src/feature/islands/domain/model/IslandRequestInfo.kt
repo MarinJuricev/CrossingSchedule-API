@@ -1,7 +1,6 @@
 package com.example.feature.islands.domain.model
 
-data class IslandInfo(
-    val islandId: Int,
+data class IslandRequestInfo(
     val islandName: String,
     val hemisphere: Hemisphere,
     val numberOfVillagers: Int,
