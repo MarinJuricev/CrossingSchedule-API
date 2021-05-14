@@ -15,7 +15,7 @@ interface IslandDao {
 
 object Islands : Table(), IslandDao {
     val id: Column<Int> = integer("id").autoIncrement()
-    val userId: Column<String> = (Users.varchar("id", length = 255).references(Users.id))
+    val userId: Column<String> = (Users.varchar("userId", length = 255).references(Users.id))
     private val name: Column<String> = varchar("name", length = 255)
     private val hemisphere: Column<Hemisphere> = enumeration("hemisphere", Hemisphere::class)
     private val numberOfVillagers: Column<Int> = integer("numberOfVillagers")

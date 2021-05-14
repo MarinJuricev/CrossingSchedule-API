@@ -1,8 +1,9 @@
 package feature.islands.domain.usecase
 
+import com.example.core.model.Failure
 import com.example.core.model.Mapper
+import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
-import com.example.feature.islands.domain.model.Hemisphere
 import com.example.feature.islands.domain.model.IslandInfo
 import com.example.feature.islands.domain.model.IslandRequestInfo
 import com.example.feature.islands.domain.repository.IslandRepository
@@ -18,15 +19,13 @@ import org.junit.jupiter.api.Test
 
 private const val USER_ID = "userId"
 private const val ISLAND_ID = 1
-private const val ISLAND_NAME = "islandName"
-private const val NUMBER_OF_VILLAGERS = 12
-private const val LAST_VISITED = 0L
 
 @ExperimentalCoroutinesApi
 internal class CreateIslandTest {
 
     private val islandRepository: IslandRepository = mockk()
-    private val islandCreationRequestToIslandRequestInfoMapper: Mapper<IslandRequestInfo, IslandCreationRequest> = mockk()
+    private val islandCreationRequestToIslandRequestInfoMapper: Mapper<IslandRequestInfo, IslandCreationRequest> =
+        mockk()
     private lateinit var sut: CreateIsland
 
     @BeforeEach
@@ -40,40 +39,39 @@ internal class CreateIslandTest {
 
     @Test
     fun `invoke should query islandRepository getIslandById when createIsland returns Right`() = runBlockingTest {
-        val islandInfo = IslandInfo(
-            ISLAND_NAME,
-            Hemisphere.NORTH,
-            NUMBER_OF_VILLAGERS,
-            LAST_VISITED
-        )
+        val islandCreationRequest: IslandCreationRequest = mockk()
+        val islandRequestInfo: IslandRequestInfo = mockk()
+        val islandInfo: IslandInfo = mockk()
 
         coEvery {
-            islandRepository.createIsland(USER_ID, islandInfo)
+            islandCreationRequestToIslandRequestInfoMapper.map(islandCreationRequest)
+        } coAnswers { islandRequestInfo }
+        coEvery {
+            islandRepository.createIsland(USER_ID, islandRequestInfo)
         } coAnswers { ISLAND_ID.buildRight() }
         coEvery {
             islandRepository.getIslandById(ISLAND_ID)
         } coAnswers { islandInfo.buildRight() }
 
-        val actualResult = sut(USER_ID, islandInfo)
+        val actualResult = sut(USER_ID, islandCreationRequest)
 
         assertThat(actualResult).isEqualTo(islandInfo.buildRight())
     }
 
     @Test
     fun `invoke should return Left when createIsland returns a Left`() = runBlockingTest {
-        val islandInfo = IslandInfo(
-            ISLAND_NAME,
-            Hemisphere.NORTH,
-            NUMBER_OF_VILLAGERS,
-            LAST_VISITED
-        )
+        val islandCreationRequest: IslandCreationRequest = mockk()
+        val islandRequestInfo: IslandRequestInfo = mockk()
 
         coEvery {
-            islandRepository.createIsland(USER_ID, islandInfo)
-        } coAnswers { InvalidUserIdFailure("").buildLeft() }
+            islandCreationRequestToIslandRequestInfoMapper.map(islandCreationRequest)
+        } coAnswers { islandRequestInfo }
+        coEvery {
+            islandRepository.createIsland(USER_ID, islandRequestInfo)
+        } coAnswers { Failure("").buildLeft() }
 
-        val actualResult = sut(USER_ID, islandInfo)
+        val actualResult = sut(USER_ID, islandCreationRequest)
 
-        assertThat(actualResult).isEqualTo(InvalidUserIdFailure("").buildLeft())
+        assertThat(actualResult).isEqualTo(Failure("").buildLeft())
     }
 }

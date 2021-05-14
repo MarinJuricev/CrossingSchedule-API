@@ -22,9 +22,9 @@ class IslandServiceImpl(
         request: IslandCreationRequest?
     ): Either<Failure, ResponseIsland> {
         if (userId == null) {
-            return Failure("Invalid userId was: $userId").buildLeft()
+            return Failure("Invalid userId cannot be null got : $userId").buildLeft()
         } else if (request == null) {
-            return Failure("Invalid request was: $request").buildLeft()
+            return Failure("Invalid request cannot be null got : $request").buildLeft()
         }
 
         return when (val result = createIslandUseCase(userId, request)) {
