@@ -17,6 +17,7 @@ plugins {
     kotlin("jvm") version "1.4.30"
     kotlin("plugin.serialization") version "1.4.30"
     id("name.remal.check-dependency-updates") version "1.3.1"
+    //gradle checkDependencyUpdates
 }
 
 group = "com.example"

@@ -16,7 +16,6 @@ object Users : Table(), AuthDao {
 
     override val primaryKey = PrimaryKey(id)
 
-
     override suspend fun getUserById(userId: String): User? = newSuspendedTransaction {
         select {
             (Users.id eq userId)
