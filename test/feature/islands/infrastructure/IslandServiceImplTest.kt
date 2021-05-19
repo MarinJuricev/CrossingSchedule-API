@@ -6,6 +6,7 @@ import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.feature.islands.domain.model.IslandInfo
 import com.example.feature.islands.domain.usecase.CreateIsland
+import com.example.feature.islands.domain.usecase.GetIslands
 import com.example.feature.islands.infrastructure.IslandService
 import com.example.feature.islands.infrastructure.IslandServiceImpl
 import com.example.feature.islands.infrastructure.model.IslandCreationRequest
@@ -24,6 +25,7 @@ private const val USER_ID = "userId"
 internal class IslandServiceImplTest {
 
     private val createIslandUseCase: CreateIsland = mockk()
+    private val getIslands: GetIslands = mockk()
     private val islandInfoToResponseIslandMapper: Mapper<ResponseIsland, IslandInfo> = mockk()
 
     private lateinit var sut: IslandService
@@ -32,7 +34,8 @@ internal class IslandServiceImplTest {
     fun setUp() {
         sut = IslandServiceImpl(
             createIslandUseCase,
-            islandInfoToResponseIslandMapper
+            getIslands,
+            islandInfoToResponseIslandMapper,
         )
     }
 
@@ -82,4 +85,42 @@ internal class IslandServiceImplTest {
 
         assertThat(actualResult).isEqualTo(responseIsland.buildRight())
     }
+
+    @Test
+    fun `getIslandForGivenUserId should return Failure when the provided userId is null`() = runBlockingTest {
+        val actualResult = sut.getIslandForGivenUserId(null)
+        val expectedResult = Failure("Invalid userId cannot be null got : null").buildLeft()
+
+        assertThat(actualResult).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `getIslandForGivenUserId should return Failure when the getIslands returns Left`() = runBlockingTest {
+        coEvery {
+            getIslands(USER_ID)
+        } coAnswers { Failure.EMPTY.buildLeft() }
+
+        val actualResult = sut.getIslandForGivenUserId(USER_ID)
+
+        assertThat(actualResult).isEqualTo(Failure.EMPTY.buildLeft())
+    }
+
+    @Test
+    fun `getIslandForGivenUserId should return List ResponseIsland when the createIslandUseCase returns Right`() =
+        runBlockingTest {
+            val islandInfo: IslandInfo = mockk()
+            val responseIsland: ResponseIsland = mockk()
+            val islandInfoList = listOf(islandInfo)
+            val responseIslandList = listOf(responseIsland)
+            coEvery {
+                getIslands(USER_ID)
+            } coAnswers { islandInfoList.buildRight() }
+            coEvery {
+                islandInfoToResponseIslandMapper.map(islandInfo)
+            } coAnswers { responseIsland }
+
+            val actualResult = sut.getIslandForGivenUserId(USER_ID)
+
+            assertThat(actualResult).isEqualTo(responseIslandList.buildRight())
+        }
 }
