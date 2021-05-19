@@ -22,8 +22,8 @@ class CreateIsland(
             userId,
             islandCreationRequestToIslandRequestInfoMapper.map(islandCreationRequest)
         )) {
-            is Right -> islandRepository.getIslandById(result.value)
             is Left -> result
+            is Right -> islandRepository.getIslandById(result.value)
         }
     }
 }

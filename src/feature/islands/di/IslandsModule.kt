@@ -9,6 +9,7 @@ import com.example.feature.islands.domain.model.IslandInfo
 import com.example.feature.islands.domain.model.IslandRequestInfo
 import com.example.feature.islands.domain.repository.IslandRepository
 import com.example.feature.islands.domain.usecase.CreateIsland
+import com.example.feature.islands.domain.usecase.GetIslands
 import com.example.feature.islands.infrastructure.IslandService
 import com.example.feature.islands.infrastructure.IslandServiceImpl
 import com.example.feature.islands.infrastructure.mapper.IslandInfoToResponseIslandMapper
@@ -23,7 +24,13 @@ const val islandCreationRequestToIslandRequestInfoMapperName = "IslandCreationRe
 val islandModule = module {
     single<IslandDao> { Islands }
 
-    factory<IslandService> { IslandServiceImpl(get(), get(named(islandInfoToResponseIslandMapperName))) }
+    factory<IslandService> {
+        IslandServiceImpl(
+            get(),
+            get(named(islandInfoToResponseIslandMapperName)),
+            get()
+        )
+    }
     factory<IslandRepository> { IslandRepositoryImpl(get()) }
     factory<Mapper<ResponseIsland, IslandInfo>>(named(islandInfoToResponseIslandMapperName)) {
         IslandInfoToResponseIslandMapper()
@@ -32,5 +39,6 @@ val islandModule = module {
         IslandCreationRequestToIslandRequestInfoMapper()
     }
     factory { CreateIsland(get(), get(named(islandCreationRequestToIslandRequestInfoMapperName))) }
+    factory { GetIslands(get()) }
 
 }
