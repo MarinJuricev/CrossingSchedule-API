@@ -27,8 +27,8 @@ val islandModule = module {
     factory<IslandService> {
         IslandServiceImpl(
             get(),
-            get(named(islandInfoToResponseIslandMapperName)),
-            get()
+            get(),
+            get(named(islandInfoToResponseIslandMapperName))
         )
     }
     factory<IslandRepository> { IslandRepositoryImpl(get()) }

@@ -1,13 +1,13 @@
 package feature.auth.data.repository
 
 import com.example.core.model.Either
+import com.example.core.model.Failure
 import com.example.core.model.Mapper
 import com.example.core.model.buildRight
 import com.example.fakeUser
 import com.example.feature.auth.data.dao.AuthDao
 import com.example.feature.auth.data.mapper.UserIdToEitherFailureOrUnitMapper
 import com.example.feature.auth.data.repository.AuthRepositoryImpl
-import com.example.feature.auth.domain.model.AuthFailure
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.domain.repository.AuthRepository
 import com.google.common.truth.Truth.assertThat
@@ -25,7 +25,7 @@ private const val USERNAME = "username"
 internal class AuthRepositoryImplTest {
 
     private val authDao: AuthDao = mockk()
-    private val userToEitherFailureOrUserMapper: Mapper<Either<AuthFailure, User>, User?> = mockk()
+    private val userToEitherFailureOrUserMapper: Mapper<Either<Failure, User>, User?> = mockk()
     private val userIdToEitherFailureOrUnitMapper: UserIdToEitherFailureOrUnitMapper = mockk()
 
     private lateinit var sut: AuthRepository

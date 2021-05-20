@@ -1,13 +1,13 @@
 package feature.auth.infrastructure
 
 import com.example.core.model.Either
+import com.example.core.model.Failure
 import com.example.core.model.Mapper
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.fakeResponseUser
 import com.example.fakeUser
 import com.example.feature.auth.domain.model.AuthFailure
-import com.example.feature.auth.domain.model.AuthFailure.*
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.domain.usecase.CreateUser
 import com.example.feature.auth.domain.usecase.GetUserById
@@ -33,7 +33,7 @@ internal class AuthServiceImplTest {
     private val getUserFromToken: GetUserFromToken = mockk()
     private val getUserById: GetUserById = mockk()
     private val createUserUseCase: CreateUser = mockk()
-    private val eitherUserToEitherResponseUserMapper: Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>> =
+    private val eitherUserToEitherResponseUserMapper: Mapper<Either<Failure, ResponseUser>, Either<Failure, User>> =
         mockk()
 
     private lateinit var sut: AuthService
@@ -61,7 +61,7 @@ internal class AuthServiceImplTest {
 
     @Test
     fun `getUserFromAuthUid should return null when getUserFromToken returns Left`() = runBlockingTest {
-        coEvery { getUserFromToken(UUID) } coAnswers { InvalidLoginFailure().buildLeft() }
+        coEvery { getUserFromToken(UUID) } coAnswers { Failure("No user present for that id").buildLeft() }
 
         val actualResult = sut.getUserFromAuthUid(UUID)
 
@@ -76,13 +76,13 @@ internal class AuthServiceImplTest {
             coEvery { getUserById(ID) } coAnswers { getUserByIdResult }
 
             val actualResult = sut.createUser(ID, USERNAME)
-            assertThat(actualResult).isEqualTo(ErrorWhileCreatingUserAccountFailure().buildLeft())
+            assertThat(actualResult).isEqualTo(Failure(AuthFailure.ERROR_WHILE_CREATING_USER_ACCOUNT).buildLeft())
         }
 
     @Test
     fun `createUser should return Response user when getUserById returns Left`() =
         runBlockingTest {
-            val getUserByIdResult = ErrorWhileCreatingUserAccountFailure().buildLeft()
+            val getUserByIdResult = Failure.EMPTY.buildLeft()
             val createUserUseCaseResult = fakeUser.buildRight()
             val mapperResult = fakeResponseUser.buildRight()
 
@@ -101,7 +101,7 @@ internal class AuthServiceImplTest {
     @Test
     fun `createUser should return NoUserPresentForTokenFailure when provided is id null`() = runBlockingTest {
         val actualResult = sut.createUser(null, USERNAME)
-        val expectedResult = NoUserPresentForTokenFailure().buildLeft()
+        val expectedResult = Failure(AuthFailure.NO_USER_PRESENT_FOR_TOKEN).buildLeft()
 
         assertThat(actualResult).isEqualTo(expectedResult)
     }
@@ -109,7 +109,7 @@ internal class AuthServiceImplTest {
     @Test
     fun `createUser should return MissingRequiredArgument when provided username is null`() = runBlockingTest {
         val actualResult = sut.createUser(ID, null)
-        val expectedResult = MissingRequiredArgument("Username is required got: null").buildLeft()
+        val expectedResult = Failure("Username is required got: null").buildLeft()
 
         assertThat(actualResult).isEqualTo(expectedResult)
     }
@@ -117,7 +117,7 @@ internal class AuthServiceImplTest {
     @Test
     fun `loginUser should return InvalidLoginFailure when provided id is null`() = runBlockingTest {
         val actualResult = sut.loginUser(null)
-        val expectedResult = InvalidLoginFailure().buildLeft()
+        val expectedResult = Failure(AuthFailure.INVALID_LOGIN).buildLeft()
 
         assertThat(actualResult).isEqualTo(expectedResult)
     }
@@ -141,12 +141,12 @@ internal class AuthServiceImplTest {
 
     @Test
     fun `loginUser should return InvalidLoginFailure when getUserById returns Left`() = runBlockingTest {
-        val getUserByIdResult = ErrorWhileCreatingUserAccountFailure().buildLeft()
+        val getUserByIdResult = Failure.EMPTY.buildLeft()
 
         coEvery { getUserById(ID) } coAnswers { getUserByIdResult }
 
         val actualResult = sut.loginUser(ID)
 
-        assertThat(actualResult).isEqualTo(InvalidLoginFailure().buildLeft())
+        assertThat(actualResult).isEqualTo(Failure(AuthFailure.INVALID_LOGIN).buildLeft())
     }
 }

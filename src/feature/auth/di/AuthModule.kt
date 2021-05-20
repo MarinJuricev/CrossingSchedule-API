@@ -1,6 +1,7 @@
 package com.example.feature.auth.di
 
 import com.example.core.model.Either
+import com.example.core.model.Failure
 import com.example.core.model.Mapper
 import com.example.feature.auth.data.dao.AuthDao
 import com.example.feature.auth.data.dao.Users
@@ -29,12 +30,12 @@ val authModule = module {
     single<AuthDao> { Users }
     single<FirebaseAuth> { FirebaseAuth.getInstance() }
 
-    factory<Mapper<Either<AuthFailure, User>, User?>>(
+    factory<Mapper<Either<Failure, User>, User?>>(
         named(userToEitherFailureOrUserMapperName)
     ) {
         UserToEitherFailureOrUserMapper()
     }
-    factory<Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>>>(
+    factory<Mapper<Either<Failure, ResponseUser>, Either<Failure, User>>>(
         named(createUserServiceMapperName)
     ) {
         EitherUserToEitherResponseUserMapper()

@@ -1,10 +1,11 @@
 package feature.auth.data.mapper
 
+import com.example.core.model.Failure
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.feature.auth.data.mapper.UserIdToEitherFailureOrUnitMapper
 import com.example.feature.auth.data.mapper.UserIdToEitherFailureOrUnitMapperImpl
-import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccountFailure
+import com.example.feature.auth.domain.model.AuthFailure
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -35,7 +36,7 @@ internal class UserIdToEitherFailureOrUnitMapperImplTest {
     @Test
     fun `map should return Left AuthFailure when the providedUserId and returnedUserId dont match`() = runBlockingTest {
         val actualResult = sut.map(PROVIDED_USER_ID, DIFFERENT_PROVIDED_USER_ID)
-        val expectedResult = ErrorWhileCreatingUserAccountFailure().buildLeft()
+        val expectedResult = Failure(AuthFailure.ERROR_WHILE_CREATING_USER_ACCOUNT).buildLeft()
 
         assertThat(actualResult).isEqualTo(expectedResult)
     }

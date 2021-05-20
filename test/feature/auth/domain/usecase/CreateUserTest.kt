@@ -1,9 +1,9 @@
 package feature.auth.domain.usecase
 
+import com.example.core.model.Failure
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.fakeUser
-import com.example.feature.auth.domain.model.AuthFailure.ErrorWhileCreatingUserAccountFailure
 import com.example.feature.auth.domain.repository.AuthRepository
 import com.example.feature.auth.domain.usecase.CreateUser
 import com.google.common.truth.Truth.assertThat
@@ -34,7 +34,7 @@ internal class CreateUserTest {
 
     @Test
     fun `invoke should return the create user result when it returns Left`() = runBlockingTest {
-        val createUserResult = ErrorWhileCreatingUserAccountFailure().buildLeft()
+        val createUserResult = Failure.EMPTY.buildLeft()
 
         coEvery {
             authRepository.createUser(USER_ID, USERNAME)

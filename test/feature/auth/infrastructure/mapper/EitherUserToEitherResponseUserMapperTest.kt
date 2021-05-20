@@ -1,12 +1,11 @@
 package feature.auth.infrastructure.mapper
 
 import com.example.core.model.Either
+import com.example.core.model.Failure
 import com.example.core.model.Mapper
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
 import com.example.fakeUser
-import com.example.feature.auth.domain.model.AuthFailure
-import com.example.feature.auth.domain.model.AuthFailure.InvalidLoginFailure
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.infrastructure.ResponseUser
 import com.example.feature.auth.infrastructure.mapper.EitherUserToEitherResponseUserMapper
@@ -22,7 +21,7 @@ private const val USERNAME = "username"
 @ExperimentalCoroutinesApi
 internal class EitherUserToEitherResponseUserMapperTest {
 
-    private lateinit var sut: Mapper<Either<AuthFailure, ResponseUser>, Either<AuthFailure, User>>
+    private lateinit var sut: Mapper<Either<Failure, ResponseUser>, Either<Failure, User>>
 
     @BeforeEach
     fun setUp() {
@@ -47,7 +46,7 @@ internal class EitherUserToEitherResponseUserMapperTest {
 
     @Test
     fun `map should return provided origin when origin is Either Left`() = runBlockingTest {
-        val origin = InvalidLoginFailure().buildLeft()
+        val origin = Failure.EMPTY.buildLeft()
 
         val actualResult = sut.map(origin)
 

@@ -1,8 +1,8 @@
 package feature.auth.domain.usecase
 
+import com.example.core.model.Failure
 import com.example.core.model.buildLeft
 import com.example.core.model.buildRight
-import com.example.feature.auth.domain.model.AuthFailure.NoUserPresentForTokenFailure
 import com.example.feature.auth.domain.model.User
 import com.example.feature.auth.domain.usecase.GetUserFromToken
 import com.google.common.truth.Truth.assertThat
@@ -62,7 +62,7 @@ internal class GetUserFromTokenTest {
     }
 
     @Test
-    fun `invoke should return Left NoUserPresentForTokenFailure when getUser id throws FirebaseAuthException`() {
+    fun `invoke should return Left Failure when getUser id throws FirebaseAuthException`() {
         val exception = FirebaseAuthException(
             ErrorCode.ABORTED,
             ERROR_MESSAGE,
@@ -74,7 +74,7 @@ internal class GetUserFromTokenTest {
         every { firebaseAuth.getUser(UID) } throws exception
 
         val actualResult = sut(UID)
-        val expectedResult = NoUserPresentForTokenFailure().buildLeft()
+        val expectedResult = Failure("No user present for that id").buildLeft()
 
         assertThat(actualResult).isEqualTo(expectedResult)
     }
