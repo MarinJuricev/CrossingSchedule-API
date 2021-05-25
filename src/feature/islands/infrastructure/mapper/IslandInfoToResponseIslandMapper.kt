@@ -13,6 +13,7 @@ class IslandInfoToResponseIslandMapper : Mapper<ResponseIsland, IslandInfo> {
                 islandName = islandName,
                 hemisphere = hemisphere,
                 numberOfVillagers = numberOfVillagers,
+                lastVisited = lastVisited,
             )
         }
     }

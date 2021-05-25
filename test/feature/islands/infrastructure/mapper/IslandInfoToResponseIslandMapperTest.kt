@@ -43,6 +43,7 @@ internal class IslandInfoToResponseIslandMapperTest {
             islandName = ISLAND_NAME,
             hemisphere = HEMISPHERE,
             numberOfVillagers = NUMBER_OF_VILLAGERS,
+            lastVisited = LAST_VISITED
         )
 
         assertThat(actualResult).isEqualTo(expectedResult)
