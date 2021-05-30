@@ -1,5 +1,6 @@
 package com.example.feature.schedule.infrastructure
 
-class ScheduleService() {
-
+interface ScheduleService {
+    suspend fun getScheduleForGivenDay()
+    suspend fun updateScheduleForGivenDay()
 }
